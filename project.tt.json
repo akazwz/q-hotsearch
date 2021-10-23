@@ -1,0 +1,9 @@
+{
+  "miniprogramRoot": "./",
+  "projectname": "q-hotsearch",
+  "appid": "touristappid",
+  "setting": {
+    "es6": false,
+    "minified": false
+  }
+}
