@@ -1,3 +1,4 @@
 export default {
-  navigationBarTitleText: '订阅'
+  navigationBarTitleText: '订阅',
+  enablePullDownRefresh: true
 }
