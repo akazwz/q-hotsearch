@@ -6,13 +6,13 @@
   "setting": {
     "urlCheck": false,
     "es6": false,
-    "enhance": true,
+    "enhance": false,
     "postcss": false,
     "preloadBackgroundData": false,
-    "minified": false,
+    "minified": true,
     "newFeature": false,
     "coverView": true,
-    "nodeModules": false,
+    "nodeModules": true,
     "autoAudits": false,
     "showShadowRootInWxmlPanel": true,
     "scopeDataCheck": false,
@@ -35,11 +35,12 @@
     "userConfirmedBundleSwitch": false,
     "packNpmManually": false,
     "packNpmRelationList": [],
-    "minifyWXSS": true,
+    "minifyWXSS": false,
     "disableUseStrict": false,
     "showES6CompileOption": false,
     "useCompilerPlugins": false
   },
   "compileType": "miniprogram",
+  "libVersion": "2.20.1",
   "condition": {}
 }
