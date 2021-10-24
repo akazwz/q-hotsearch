@@ -88,7 +88,7 @@ const About = () => {
       success: (result) => {
         if (result.code) {
           Taro.request({
-            url: 'http://192.168.31.217:8000/v1/token/open-id',
+            url: 'https://api.hellozwz.com/v1/token/open-id',
             data: {
               code: result.code,
               encrypt: encryptedData,

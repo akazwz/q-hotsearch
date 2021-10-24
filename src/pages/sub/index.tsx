@@ -44,7 +44,7 @@ const Sub = () => {
     setLoading(true)
     Taro.vibrateShort().then()
     Taro.request({
-      url: 'http://192.168.31.217:8000/v1/subs',
+      url: 'https://api.hellozwz.com/v1/subs',
       header: {
         token: Taro.getStorageSync('token')
       },
@@ -70,7 +70,7 @@ const Sub = () => {
   const addSubWord = (word: string) => {
     setLoading(true)
     Taro.request({
-      url: 'http://192.168.31.217:8000/v1/subs',
+      url: 'https://api.hellozwz.com/v1/subs',
       header: {
         token: Taro.getStorageSync('token')
       },
@@ -96,7 +96,7 @@ const Sub = () => {
   const deleteSubWord = (word: string) => {
     setLoading(true)
     Taro.request({
-      url: 'http://192.168.31.217:8000/v1/subs',
+      url: 'https://api.hellozwz.com/v1/subs',
       header: {
         token: Taro.getStorageSync('token')
       },
