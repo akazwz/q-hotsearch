@@ -18,7 +18,6 @@ import '@taroify/core/dialog/style'
 import Toast from '@taroify/core/toast'
 import '@taroify/core/toast/style'
 import { AddOutlined } from '@taroify/icons'
-import './index.scss'
 
 const Sub = () => {
   const [subs, setSubs] = useState([])
