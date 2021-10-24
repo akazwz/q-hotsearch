@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import Taro from '@tarojs/taro'
-import { useReady } from '@tarojs/runtime'
+import { useReady, useTabItemTap } from '@tarojs/runtime'
 import { View } from '@tarojs/components'
 import Button from '@taroify/core/button'
 import '@taroify/core/button/style'
@@ -23,6 +23,11 @@ const Sub = () => {
   // 获取订阅
   useReady(() => {
     getSubWords()
+  })
+
+  // tap vibrate
+  useTabItemTap(() => {
+    Taro.vibrateShort().then()
   })
 
   const getSubWords = () => {

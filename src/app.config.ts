@@ -13,8 +13,8 @@ export default {
         text: '首页'
       },
       {
-        'iconPath': 'resource/us.png',
-        'selectedIconPath': 'resource/us-selected.png',
+        'iconPath': 'resource/sub.png',
+        'selectedIconPath': 'resource/sub-selected.png',
         pagePath: 'pages/sub/index',
         text: '订阅'
       },
