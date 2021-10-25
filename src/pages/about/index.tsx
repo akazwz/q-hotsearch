@@ -178,18 +178,18 @@ const About = () => {
   }*/
 
   // 退出登录
-  /*const handleQuitLogin = () => {
-    Taro.removeStorageSync('token')
-    Taro.removeStorageSync('expires_at')
-    Taro.removeStorageSync('authority_id')
-    Taro.removeStorageSync('phone')
-    setUserInfo({
-      avatarUrl: '',
-      nickName: '',
-      bio: '',
-    })
-    setHasLogin(false)
-  }*/
+  /* const handleQuitLogin = () => {
+     Taro.removeStorageSync('token')
+     Taro.removeStorageSync('expires_at')
+     Taro.removeStorageSync('authority_id')
+     Taro.removeStorageSync('phone')
+     setUserInfo({
+       avatarUrl: '',
+       nickName: '',
+       bio: '',
+     })
+     setHasLogin(false)
+   }*/
 
   // 前往修改资料
   const handleToUpdateProfile = () => {
@@ -208,6 +208,10 @@ const About = () => {
       <Cell title='通知管理' rightIcon={<Arrow />} clickable />
       <Cell title='手机绑定' rightIcon={<Arrow />} clickable />
       <Cell title='更多设置' rightIcon={<Arrow />} clickable />
+      <Cell title='清楚缓存' rightIcon={<Arrow />} clickable onClick={() => {
+        Taro.clearStorageSync()
+      }}
+      />
       <Toast open={toastInfo.open} type={toastInfo.type}>{toastInfo.content}</Toast>
     </View>
   )
