@@ -208,7 +208,7 @@ const About = () => {
       <Cell title='通知管理' rightIcon={<Arrow />} clickable />
       <Cell title='手机绑定' rightIcon={<Arrow />} clickable />
       <Cell title='更多设置' rightIcon={<Arrow />} clickable />
-      <Cell title='清楚缓存' rightIcon={<Arrow />} clickable onClick={() => {
+      <Cell title='清除缓存' rightIcon={<Arrow />} clickable onClick={() => {
         Taro.clearStorageSync()
       }}
       />
