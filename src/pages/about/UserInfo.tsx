@@ -12,8 +12,8 @@ import '@taroify/core/tag/style'
 import { Contact } from '@taroify/icons'
 
 const UserInfo = (props: any) => {
-  const { userInfo, hasUserInfo, handleBtnClick } = props
-  const { avatarUrl, nickName } = userInfo
+  const { userInfo, hasLogin, handleBtnClick } = props
+  const { avatarUrl, nickName, bio } = userInfo
   return (
     <View
       style={{
@@ -35,7 +35,7 @@ const UserInfo = (props: any) => {
           <Col span='8'>
             <View>
               <Image
-                src={hasUserInfo ? avatarUrl : 'https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJ6m9WsdeiclaLlZ9YIibCYZ7HlS8NroTvnDlLvj91BIju5UB36I51Px0uLMpVahrwRq8Mk1t2mSCRQ/132'}
+                src={hasLogin ? avatarUrl : 'https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJ6m9WsdeiclaLlZ9YIibCYZ7HlS8NroTvnDlLvj91BIju5UB36I51Px0uLMpVahrwRq8Mk1t2mSCRQ/132'}
                 round
                 style={{
                   width: '5rem',
@@ -56,7 +56,7 @@ const UserInfo = (props: any) => {
               shape='round'
               onClick={handleBtnClick}
             >
-              {hasUserInfo ? '退出登录' : '一键登录'}
+              {hasLogin ? '修改资料' : '一键登录'}
             </Button>
           </Col>
         </Row>
@@ -67,7 +67,7 @@ const UserInfo = (props: any) => {
         >
           <Col span='24' style={{ margin: '1rem' }}>
             <Tag
-              color={hasUserInfo ? 'primary' : 'default'}
+              color={hasLogin ? 'primary' : 'default'}
               shape='round'
               size='medium'
               style={{ marginLeft: '1rem' }}
@@ -82,6 +82,9 @@ const UserInfo = (props: any) => {
             >
               短信通知
             </Tag>
+          </Col>
+          <Col span='24' style={{ margin: '1rem' }}>
+            {bio}
           </Col>
         </Row>
       </View>

@@ -1,22 +1,30 @@
-import {useState} from 'react'
+import { useState } from 'react'
 import Taro from '@tarojs/taro'
-import {View} from '@tarojs/components'
-import {useReady, useTabItemTap} from '@tarojs/runtime'
-import Toast from '@taroify/core/toast'
+import { View } from '@tarojs/components'
+import { useReady, useTabItemTap } from '@tarojs/runtime'
+import Toast, { ToastType } from '@taroify/core/toast'
 import '@taroify/core/toast/style'
 import Cell from '@taroify/core/cell'
 import '@taroify/core/cell/style'
-import {Arrow} from '@taroify/icons'
+import { Arrow } from '@taroify/icons'
 import UserInfo from './UserInfo'
 
 const About = () => {
   /*const [aboutUs, setAboutUs] = useState(false)
   const [rateUs, setRateUs] = useState(false)
   const [rateValue, setRateValue] = useState(5)*/
-  const [loginError, setLoginError] = useState(false)
+  const [loginCode, setLoginCode] = useState('')
+  const [hasLogin, setHasLogin] = useState(false)
   const [userInfo, setUserInfo] = useState({
     avatarUrl: '',
     nickName: '',
+    bio: '',
+  })
+
+  const [toastInfo, setToastInfo] = useState({
+    open: false,
+    type: ToastType.Loading,
+    content: '登录中',
   })
 
   useReady(() => {
@@ -24,7 +32,11 @@ const About = () => {
       backgroundColor: '#17ce7c',
       frontColor: '#ffffff',
       fail: () => {
-        console.log('error')
+        setToastInfo({
+          open: true,
+          type: ToastType.Fail,
+          content: '状态栏颜色设置失败',
+        })
       }
     }).then()
   })
@@ -33,62 +45,64 @@ const About = () => {
     Taro.vibrateShort().then()
   })
 
-  const [hasLogin, setHasLogin] = useState(false)
-
   useReady(() => {
-    // userInfo local storage
     try {
       let info = Taro.getStorageSync('userInfo')
       if (info) {
         setUserInfo(JSON.parse(info))
       }
       let token = Taro.getStorageSync('token')
+      // 存在token
       if (token) {
         setHasLogin(true)
+      } else {
+        // 不存在token
+        // 先 login  再 get userinfo
+        Taro.login({
+          success: (result) => {
+            // 获取 code 失败
+            if (!result.code) {
+              setToastInfo({
+                open: true,
+                type: ToastType.Fail,
+                content: '登录失败',
+              })
+              return
+            }
+            // 获取code成功
+            setLoginCode(result.code)
+          }
+        }).then()
       }
-    } catch (e) {
-      Taro.atMessage({
-        'message': e,
-        'type': 'error',
+    } catch (err) {
+      setToastInfo({
+        open: true,
+        type: ToastType.Fail,
+        content: err,
       })
     }
   })
 
   // 登录获取token
   const handleLogin = () => {
-    Taro.login({
-      success: (result) => {
-        // 获取 code 成功
-        if (result.code) {
-          // 获取用户信息
-          Taro.getUserProfile({
-            desc: '用于完善会员资料',
-            success: (res) => {
-              setUserInfo({
-                avatarUrl: res.userInfo.avatarUrl,
-                nickName: res.userInfo.nickName,
-              })
-              try {
-                Taro.setStorageSync('userInfo', JSON.stringify(res.userInfo))
-              } catch (e) {
-                console.log(e)
-              }
-              // 获取加密数据和iv后进行登录
-              handleLoginRequest(result.code, res.encryptedData, res.iv)
-            },
-            fail: (err) => {
-              console.log(err)
-            },
-          })
-        } else {
-          console.log('login fail')
-          setLoginError(true)
-          return
-        }
-      }
-    }).then()
+    // 获取用户信息
+    Taro.getUserProfile({
+      desc: '用于完善会员资料',
+      success: (res) => {
+        // 获取加密数据和iv后进行登录
+        handleLoginRequest(loginCode, res.encryptedData, res.iv)
+      },
+      fail: (err) => {
+        setToastInfo({
+          open: true,
+          type: ToastType.Fail,
+          content: err.errMsg,
+        })
+      },
+    })
   }
 
+  // 一键登录
   const handleLoginRequest = (LoginCode, encryptedData, iv: string) => {
     Taro.request({
       url: 'http://192.168.31.217:8000/v1/token/open-id',
@@ -100,32 +114,45 @@ const About = () => {
       method: 'POST'
     })
       .then((loginRes) => {
-        if (loginRes.statusCode === 201) {
-          const {code, data} = loginRes.data
-          if (code !== 2000) {
-            setLoginError(true)
-            return
-          } else {
-            const {expires_at, token, user} = data
-            const {authority_id, phone} = user
-            Taro.setStorageSync('token', token)
-            Taro.setStorageSync('expires_at', expires_at)
-            Taro.setStorageSync('authority_id', authority_id)
-            Taro.setStorageSync('phone', phone)
-            setHasLogin(true)
-          }
-        } else {
-          console.log('login error')
-          setLoginError(true)
+        // 登录失败
+        if (loginRes.statusCode !== 201) {
+          setToastInfo({
+            open: true,
+            type: ToastType.Fail,
+            content: '登录失败',
+          })
           return
         }
+        const { code, data, msg } = loginRes.data
+        // 登录失败
+        if (code !== 2000) {
+          // 登录失败
+          setToastInfo({
+            open: true,
+            type: ToastType.Fail,
+            content: msg,
+          })
+          return
+        }
+        const { expires_at, token, user } = data
+        const { authority_id, phone, avatar_url, nick_name, bio } = user
+        setUserInfo({
+          avatarUrl: avatar_url,
+          nickName: nick_name,
+          bio: bio,
+        })
+        Taro.setStorageSync('token', token)
+        Taro.setStorageSync('expires_at', expires_at)
+        Taro.setStorageSync('authority_id', authority_id)
+        Taro.setStorageSync('phone', phone)
+        setHasLogin(true)
       })
-      .catch((error) => {
-        if (error !== null) {
-          console.log(error)
-          setLoginError(true)
-          return
-        }
+      .catch((err) => {
+        setToastInfo({
+          open: true,
+          type: ToastType.Fail,
+          content: err,
+        })
       })
   }
 
@@ -137,32 +164,31 @@ const About = () => {
     }).then()
   }*/
 
+  // 退出登录
   const handleQuitLogin = () => {
-    console.log('quit')
-    Taro.clearStorage().then()
+    Taro.removeStorageSync('token')
+    Taro.removeStorageSync('expires_at')
+    Taro.removeStorageSync('authority_id')
+    Taro.removeStorageSync('phone')
     setUserInfo({
       avatarUrl: '',
       nickName: '',
+      bio: '',
     })
     setHasLogin(false)
   }
 
   return (
-    <View style={{
-      backgroundColor: 'red',
-      width: '100%',
-      height: '100%',
-    }}
-    >
+    <View>
       <UserInfo
-        hasUserInfo={hasLogin}
+        hasLogin={hasLogin}
         userInfo={userInfo}
         handleBtnClick={hasLogin ? handleQuitLogin : handleLogin}
       />
       <Cell title='通知管理' rightIcon={<Arrow />} clickable />
       <Cell title='手机绑定' rightIcon={<Arrow />} clickable />
       <Cell title='更多设置' rightIcon={<Arrow />} clickable />
-      <Toast open={loginError} type='fail'>登录失败</Toast>
+      <Toast open={toastInfo.open} type={toastInfo.type}>{toastInfo.content}</Toast>
     </View>
   )
 }
