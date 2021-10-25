@@ -1,8 +1,9 @@
 export default {
   pages: [
     'pages/index/index',
-    'pages/about/index',
     'pages/sub/index',
+    'pages/about/index',
+    'pages/update-profile/index',
   ],
   tabBar: {
     list: [

@@ -9,17 +9,27 @@ import '@taroify/core/cell/style'
 import { Arrow } from '@taroify/icons'
 import UserInfo from './UserInfo'
 
+export interface UserInfoI {
+  avatarUrl: string,
+  nickName: string,
+  gender: number,
+  bio: string,
+}
+
 const About = () => {
   /*const [aboutUs, setAboutUs] = useState(false)
   const [rateUs, setRateUs] = useState(false)
   const [rateValue, setRateValue] = useState(5)*/
   const [loginCode, setLoginCode] = useState('')
   const [hasLogin, setHasLogin] = useState(false)
-  const [userInfo, setUserInfo] = useState({
+  let userInfoInit: UserInfoI
+  userInfoInit = {
     avatarUrl: '',
     nickName: '',
+    gender: 0,
     bio: '',
-  })
+  }
+  const [userInfo, setUserInfo] = useState(userInfoInit)
 
   const [toastInfo, setToastInfo] = useState({
     open: false,
@@ -49,7 +59,7 @@ const About = () => {
     try {
       let info = Taro.getStorageSync('userInfo')
       if (info) {
-        setUserInfo(JSON.parse(info))
+        setUserInfo(info)
       }
       let token = Taro.getStorageSync('token')
       // 存在token
@@ -135,12 +145,15 @@ const About = () => {
           return
         }
         const { expires_at, token, user } = data
-        const { authority_id, phone, avatar_url, nick_name, bio } = user
-        setUserInfo({
+        const { authority_id, phone, avatar_url, nick_name, gender, bio } = user
+        const userInfoRes = {
           avatarUrl: avatar_url,
           nickName: nick_name,
+          gender: gender,
           bio: bio,
-        })
+        }
+        setUserInfo(userInfoRes)
+        Taro.setStorageSync('userInfo', userInfoRes)
         Taro.setStorageSync('token', token)
         Taro.setStorageSync('expires_at', expires_at)
         Taro.setStorageSync('authority_id', authority_id)
@@ -165,7 +178,7 @@ const About = () => {
   }*/
 
   // 退出登录
-  const handleQuitLogin = () => {
+  /*const handleQuitLogin = () => {
     Taro.removeStorageSync('token')
     Taro.removeStorageSync('expires_at')
     Taro.removeStorageSync('authority_id')
@@ -176,6 +189,13 @@ const About = () => {
       bio: '',
     })
     setHasLogin(false)
+  }*/
+
+  // 前往修改资料
+  const handleToUpdateProfile = () => {
+    Taro.navigateTo({
+      url: '/pages/update-profile/index',
+    })
   }
 
   return (
@@ -183,7 +203,7 @@ const About = () => {
       <UserInfo
         hasLogin={hasLogin}
         userInfo={userInfo}
-        handleBtnClick={hasLogin ? handleQuitLogin : handleLogin}
+        handleBtnClick={hasLogin ? handleToUpdateProfile : handleLogin}
       />
       <Cell title='通知管理' rightIcon={<Arrow />} clickable />
       <Cell title='手机绑定' rightIcon={<Arrow />} clickable />
