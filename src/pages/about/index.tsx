@@ -115,7 +115,7 @@ const About = () => {
   // 一键登录
   const handleLoginRequest = (LoginCode, encryptedData, iv: string) => {
     Taro.request({
-      url: 'http://192.168.31.217:8000/v1/token/open-id',
+      url: 'https://api.hellozwz.com/v1/token/open-id',
       data: {
         code: LoginCode,
         encrypt: encryptedData,
