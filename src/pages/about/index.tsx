@@ -1,12 +1,12 @@
-import { useState } from 'react'
+import {useState} from 'react'
 import Taro from '@tarojs/taro'
-import { View } from '@tarojs/components'
-import { useReady, useTabItemTap } from '@tarojs/runtime'
+import {View} from '@tarojs/components'
+import {useReady, useTabItemTap} from '@tarojs/runtime'
 import Toast from '@taroify/core/toast'
 import '@taroify/core/toast/style'
 import Cell from '@taroify/core/cell'
 import '@taroify/core/cell/style'
-import { Arrow } from '@taroify/icons'
+import {Arrow} from '@taroify/icons'
 import UserInfo from './UserInfo'
 
 const About = () => {
@@ -54,76 +54,32 @@ const About = () => {
     }
   })
 
-  // get userInfo
-  const getUserInfo = () => {
-    console.log('login')
-    // 获取用户信息
-    Taro.getUserProfile({
-      desc: '用于完善会员资料',
-      success: (res) => {
-        setUserInfo({
-          avatarUrl: res.userInfo.avatarUrl,
-          nickName: res.userInfo.nickName,
-        })
-        try {
-          Taro.setStorageSync('userInfo', JSON.stringify(res.userInfo))
-        } catch (e) {
-          console.log(e)
-        }
-        // 获取加密数据和 iv
-        const encryptedData = res.encryptedData
-        const iv = res.iv
-        // 获取加密数据和iv后进行登录
-        handleLogin(encryptedData, iv)
-      },
-      fail: (err) => {
-        console.log(err)
-      },
-    })
-  }
-
   // 登录获取token
-  const handleLogin = (encryptedData: string, iv: string) => {
+  const handleLogin = () => {
     Taro.login({
       success: (result) => {
+        // 获取 code 成功
         if (result.code) {
-          Taro.request({
-            url: 'http://192.168.31.217:8000/v1/token/open-id',
-            data: {
-              code: result.code,
-              encrypt: encryptedData,
-              iv: iv
+          // 获取用户信息
+          Taro.getUserProfile({
+            desc: '用于完善会员资料',
+            success: (res) => {
+              setUserInfo({
+                avatarUrl: res.userInfo.avatarUrl,
+                nickName: res.userInfo.nickName,
+              })
+              try {
+                Taro.setStorageSync('userInfo', JSON.stringify(res.userInfo))
+              } catch (e) {
+                console.log(e)
+              }
+              // 获取加密数据和iv后进行登录
+              handleLoginRequest(result.code, res.encryptedData, res.iv)
             },
-            method: 'POST'
+            fail: (err) => {
+              console.log(err)
+            },
           })
-            .then((loginRes) => {
-              if (loginRes.statusCode === 201) {
-                const { code, data } = loginRes.data
-                if (code !== 2000) {
-                  setLoginError(true)
-                  return
-                } else {
-                  const { expires_at, token, user } = data
-                  const { authority_id, phone } = user
-                  Taro.setStorageSync('token', token)
-                  Taro.setStorageSync('expires_at', expires_at)
-                  Taro.setStorageSync('authority_id', authority_id)
-                  Taro.setStorageSync('phone', phone)
-                  setHasLogin(true)
-                }
-              } else {
-                console.log('login error')
-                setLoginError(true)
-                return
-              }
-            })
-            .catch((error) => {
-              if (error !== null) {
-                console.log(error)
-                setLoginError(true)
-                return
-              }
-            })
         } else {
           console.log('login fail')
           setLoginError(true)
@@ -131,6 +87,46 @@ const About = () => {
         }
       }
     }).then()
+  }
+
+  const handleLoginRequest = (LoginCode, encryptedData, iv: string) => {
+    Taro.request({
+      url: 'http://192.168.31.217:8000/v1/token/open-id',
+      data: {
+        code: LoginCode,
+        encrypt: encryptedData,
+        iv: iv
+      },
+      method: 'POST'
+    })
+      .then((loginRes) => {
+        if (loginRes.statusCode === 201) {
+          const {code, data} = loginRes.data
+          if (code !== 2000) {
+            setLoginError(true)
+            return
+          } else {
+            const {expires_at, token, user} = data
+            const {authority_id, phone} = user
+            Taro.setStorageSync('token', token)
+            Taro.setStorageSync('expires_at', expires_at)
+            Taro.setStorageSync('authority_id', authority_id)
+            Taro.setStorageSync('phone', phone)
+            setHasLogin(true)
+          }
+        } else {
+          console.log('login error')
+          setLoginError(true)
+          return
+        }
+      })
+      .catch((error) => {
+        if (error !== null) {
+          console.log(error)
+          setLoginError(true)
+          return
+        }
+      })
   }
 
   /*const handleClickZWZ = () => {
@@ -161,7 +157,7 @@ const About = () => {
       <UserInfo
         hasUserInfo={hasLogin}
         userInfo={userInfo}
-        handleBtnClick={hasLogin ? handleQuitLogin : getUserInfo}
+        handleBtnClick={hasLogin ? handleQuitLogin : handleLogin}
       />
       <Cell title='通知管理' rightIcon={<Arrow />} clickable />
       <Cell title='手机绑定' rightIcon={<Arrow />} clickable />
