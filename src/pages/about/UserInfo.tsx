@@ -83,7 +83,19 @@ const UserInfo = (props: any) => {
               短信通知
             </Tag>
           </Col>
-          <Col span='24' style={{ margin: '1rem' }}>
+        </Row>
+        <Row
+          gutter='20'
+          justify='center'
+        >
+          <Col
+            span='24'
+            style={{
+              marginLeft: '1rem',
+              marginBottom: '10px',
+              fontWeight: 'lighter',
+            }}
+          >
             {bio}
           </Col>
         </Row>
