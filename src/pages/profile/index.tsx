@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import Taro from '@tarojs/taro'
 import { View } from '@tarojs/components'
-import { useReady, useTabItemTap } from '@tarojs/runtime'
+import { useDidShow, useReady, useTabItemTap } from '@tarojs/runtime'
 import Toast, { ToastType } from '@taroify/core/toast'
 import '@taroify/core/toast/style'
 import Cell from '@taroify/core/cell'
@@ -55,7 +55,7 @@ const About = () => {
     Taro.vibrateShort().then()
   })
 
-  useReady(() => {
+  useDidShow(() => {
     try {
       let info = Taro.getStorageSync('userInfo')
       if (info) {
@@ -195,7 +195,7 @@ const About = () => {
   const handleToUpdateProfile = () => {
     Taro.navigateTo({
       url: '/pages/update-profile/index',
-    })
+    }).then()
   }
 
   return (

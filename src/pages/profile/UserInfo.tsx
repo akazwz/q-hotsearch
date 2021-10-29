@@ -1,4 +1,4 @@
-import { View } from '@tarojs/components'
+import { Text, View } from '@tarojs/components'
 import Image from '@taroify/core/image'
 import '@taroify/core/image/style'
 import Row from '@taroify/core/row'
@@ -9,11 +9,11 @@ import Button from '@taroify/core/button'
 import '@taroify/core/button/style'
 import Tag from '@taroify/core/tag'
 import '@taroify/core/tag/style'
-import { Contact } from '@taroify/icons'
+import { Contact, UserCircleOutlined } from '@taroify/icons'
 
 const UserInfo = (props: any) => {
   const { userInfo, hasLogin, handleBtnClick } = props
-  const { avatarUrl, nickName, bio } = userInfo
+  const { avatarUrl, nickName, bio, gender } = userInfo
   return (
     <View
       style={{
@@ -47,7 +47,7 @@ const UserInfo = (props: any) => {
               />
             </View>
           </Col>
-          <Col span='8'>
+          <Col span='8' style={{ overflow: 'hidden' }}>
             {nickName}
           </Col>
           <Col span='8'>
@@ -66,6 +66,12 @@ const UserInfo = (props: any) => {
           align='center'
         >
           <Col span='24' style={{ margin: '1rem' }}>
+            <UserCircleOutlined
+              style={{
+                color: gender === 0 ? 'blue' : 'pink',
+                marginLeft: '1rem'
+              }}
+            />
             <Tag
               color={hasLogin ? 'primary' : 'default'}
               shape='round'
@@ -91,12 +97,15 @@ const UserInfo = (props: any) => {
           <Col
             span='24'
             style={{
-              marginLeft: '1rem',
               marginBottom: '10px',
               fontWeight: 'lighter',
+              wordWrap: 'break-word',
+              wordBreak: 'break-all',
             }}
           >
-            {bio}
+            <View style={{ paddingLeft: '1rem', paddingRight: '1rem' }}>
+              <Text selectable>{bio}</Text>
+            </View>
           </Col>
         </Row>
       </View>

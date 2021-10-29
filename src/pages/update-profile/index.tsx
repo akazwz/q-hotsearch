@@ -1,5 +1,5 @@
 import { View } from '@tarojs/components'
-import { useReady, useTabItemTap } from '@tarojs/runtime'
+import { useDidShow, useReady, useTabItemTap } from '@tarojs/runtime'
 import Taro from '@tarojs/taro'
 import { useState } from 'react'
 import Toast, { ToastType } from '@taroify/core/toast'
@@ -22,16 +22,21 @@ const UpdateProfile = () => {
   const [toastInfo, setToastInfo] = useState({
     open: false,
     type: ToastType.Loading,
-    content: '登录中',
+    content: '加载中',
   })
 
   const [avatarUrl, setAvatarUrl] = useState('')
   const [nickName, setNickName] = useState('')
   const [gender, setGender] = useState(0)
   const [bio, setBio] = useState('')
+  const [btnLoading, setBtnLoading] = useState(false)
   // tap vibrate
   useTabItemTap(() => {
     Taro.vibrateShort().then()
+  })
+
+  useDidShow(() => {
+    Taro.hideHomeButton().then()
   })
 
   useReady(() => {
@@ -51,6 +56,63 @@ const UpdateProfile = () => {
     setGender(userInfoInit.gender)
     setBio(userInfoInit.bio)
   })
+
+  const handleUpdateUserProfile = () => {
+    setBtnLoading(true)
+    Taro.request({
+      url: 'https://api.hellozwz.com/v1/users/profile',
+      method: 'PUT',
+      data: {
+        avatar_url: avatarUrl,
+        nick_name: nickName,
+        gender: gender,
+        bio: bio,
+      },
+      header: {
+        token: Taro.getStorageSync('token')
+      },
+    })
+      .then((res) => {
+        setBtnLoading(false)
+        if (res.statusCode !== 200) {
+          setToastInfo({
+            open: true,
+            type: ToastType.Fail,
+            content: '修改失败',
+          })
+          return
+        }
+        const { code } = res.data
+        if (code !== 2000) {
+          setToastInfo({
+            open: true,
+            type: ToastType.Fail,
+            content: '修改失败',
+          })
+          return
+        }
+        setToastInfo({
+          open: true,
+          type: ToastType.Success,
+          content: '修改成功',
+        })
+        const userInfoUpdated = {
+          avatarUrl: avatarUrl,
+          nickName: nickName,
+          gender: gender,
+          bio: bio,
+        }
+        Taro.setStorageSync('userInfo', userInfoUpdated)
+      })
+      .catch((err) => {
+        setBtnLoading(false)
+        setToastInfo({
+          open: true,
+          type: ToastType.Fail,
+          content: err,
+        })
+      })
+  }
 
   return (
     <View>
@@ -77,6 +139,7 @@ const UpdateProfile = () => {
           label='昵称'
           value={nickName}
           placeholder='请输入昵称'
+          maxlength={30}
           onChange={(e) => {
             setNickName(e.detail.value)
           }}
@@ -97,11 +160,22 @@ const UpdateProfile = () => {
           label='个签'
           value={bio}
           placeholder='请输入个性签名'
+          maxlength={140}
+          onChange={(e) => {
+            setBio(e.detail.value)
+          }}
         />
       </Cell.Group>
       <Divider />
       <View>
-        <Button color='primary' block>提交</Button>
+        <Button
+          color='primary'
+          block
+          loading={btnLoading}
+          onClick={handleUpdateUserProfile}
+        >
+          提交
+        </Button>
       </View>
       <Toast open={toastInfo.open} type={toastInfo.type}>{toastInfo.content}</Toast>
     </View>
