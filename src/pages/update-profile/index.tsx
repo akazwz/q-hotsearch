@@ -16,7 +16,7 @@ import Divider from '@taroify/core/divider'
 import '@taroify/core/divider/style'
 import Button from '@taroify/core/button'
 import '@taroify/core/button/style'
-import { UserInfoI } from '../about'
+import { UserInfoI } from '../profile'
 
 const UpdateProfile = () => {
   const [toastInfo, setToastInfo] = useState({
@@ -77,13 +77,20 @@ const UpdateProfile = () => {
           label='昵称'
           value={nickName}
           placeholder='请输入昵称'
+          onChange={(e) => {
+            setNickName(e.detail.value)
+          }}
         />
         <Field
           label='性别'
         >
-          <Radio.Group direction='horizontal' value='1'>
-            <Radio name='1'>男</Radio>
-            <Radio name='2'>女</Radio>
+          <Radio.Group
+            direction='horizontal'
+            value={gender}
+            onChange={setGender}
+          >
+            <Radio name={0}>男</Radio>
+            <Radio name={1}>女</Radio>
           </Radio.Group>
         </Field>
         <Field

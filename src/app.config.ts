@@ -2,7 +2,7 @@ export default {
   pages: [
     'pages/index/index',
     'pages/sub/index',
-    'pages/about/index',
+    'pages/profile/index',
     'pages/update-profile/index',
   ],
   tabBar: {
@@ -22,7 +22,7 @@ export default {
       {
         'iconPath': 'resource/us.png',
         'selectedIconPath': 'resource/us-selected.png',
-        pagePath: 'pages/about/index',
+        pagePath: 'pages/profile/index',
         text: '我的'
       },
     ],
