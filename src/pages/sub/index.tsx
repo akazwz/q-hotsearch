@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import Taro from '@tarojs/taro'
-import { usePullDownRefresh, useReady, useTabItemTap } from '@tarojs/runtime'
+import { useDidShow, usePullDownRefresh, useTabItemTap } from '@tarojs/runtime'
 import { View } from '@tarojs/components'
 import Button from '@taroify/core/button'
 import '@taroify/core/button/style'
@@ -26,7 +26,7 @@ const Sub = () => {
   const [loading, setLoading] = useState(false)
 
   // 获取订阅
-  useReady(() => {
+  useDidShow(() => {
     getSubWords()
   })
 
@@ -195,7 +195,15 @@ const Sub = () => {
         <Dialog.Header>未登录</Dialog.Header>
         <Dialog.Content>请登录后使用</Dialog.Content>
         <Dialog.Actions>
-          <Button onClick={() => setDialogLogin(false)}>确认</Button>
+          <Button onClick={() => {
+            setDialogLogin(false)
+            Taro.switchTab({
+              url: '/pages/profile/index'
+            }).then()
+          }}
+          >
+            确认
+          </Button>
         </Dialog.Actions>
       </Dialog>
       <Toast open={loading} type='loading'>加载中...</Toast>
