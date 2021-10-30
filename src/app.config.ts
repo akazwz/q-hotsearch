@@ -4,6 +4,7 @@ export default {
     'pages/sub/index',
     'pages/profile/index',
     'pages/update-profile/index',
+    'pages/notify/index',
   ],
   tabBar: {
     list: [

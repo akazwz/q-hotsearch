@@ -4,7 +4,6 @@ import { useDidShow, usePullDownRefresh, useTabItemTap } from '@tarojs/runtime'
 import { View } from '@tarojs/components'
 import Button from '@taroify/core/button'
 import '@taroify/core/button/style'
-import '@taroify/core/tag/style'
 import Cell from '@taroify/core/cell'
 import '@taroify/core/cell/style'
 import SwipeCell from '@taroify/core/swipe-cell'
@@ -145,23 +144,6 @@ const Sub = () => {
           </Field.Button>
         </Field>
       </Cell.Group>
-      <Button
-        block
-        color='info'
-        onClick={() => {
-          Taro.requestSubscribeMessage({
-            tmplIds: ['XV16ZyG6Af_gG8D4qg7M17Fw23m_zYWNo689XpJKYQE'],
-            fail: () => {
-              console.log('fail')
-            },
-            success: () => {
-              console.log('success')
-            }
-          }).then()
-        }}
-      >
-        获取通知
-      </Button>
       <Divider
         style={{
           color: '#1989fa',

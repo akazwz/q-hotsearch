@@ -185,15 +185,26 @@ const About = () => {
         userInfo={userInfo}
         handleBtnClick={hasLogin ? handleToUpdateProfile : handleLogin}
       />
-      <Cell title='通知管理' rightIcon={<Arrow />} clickable />
+      <Cell
+        title='通知管理'
+        rightIcon={<Arrow />}
+        clickable
+        onClick={() => {
+          Taro.navigateTo({
+            url: '/pages/notify/index',
+          }).then()
+        }}
+      />
       <Cell title='手机绑定' rightIcon={<Arrow />} clickable />
       <Cell title='更多设置' rightIcon={<Arrow />} clickable />
       <Cell title='清除缓存' rightIcon={<Arrow />} clickable onClick={() => {
         Taro.clearStorageSync()
       }}
       />
-      <Notify open={failNotify.open} color='danger' onClose={()=>setFailNotify({open: false, content: ''})}>{failNotify.content}</Notify>
-      <Notify open={successNotify.open} color='success' onClose={()=>setSuccessNotify({open: false, content: ''})}>{successNotify.content}</Notify>
+      <Notify open={failNotify.open} color='danger'
+              onClose={() => setFailNotify({ open: false, content: '' })}>{failNotify.content}</Notify>
+      <Notify open={successNotify.open} color='success'
+              onClose={() => setSuccessNotify({ open: false, content: '' })}>{successNotify.content}</Notify>
     </View>
   )
 }
