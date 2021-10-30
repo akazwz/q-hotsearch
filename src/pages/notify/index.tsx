@@ -12,6 +12,8 @@ import Stepper from '@taroify/core/stepper'
 import '@taroify/core/stepper/style'
 import Divider from '@taroify/core/divider'
 import '@taroify/core/divider/style'
+import Dialog from '@taroify/core/dialog'
+import '@taroify/core/dialog/style'
 
 export interface Notify {
   NotifyCount: number,
@@ -30,6 +32,7 @@ const NotifyManage = () => {
     LastNotify: '',
   })
   const [notifyCount, setNotifyCount] = useState(0)
+  const [dialogLogin, setDialogLogin] = useState(false)
   const [notifyGap, setNotifyGap] = useState(0)
   const [failNotify, setFailNotify] = useState({
     open: false,
@@ -54,6 +57,11 @@ const NotifyManage = () => {
         token: Taro.getStorageSync('token'),
       },
     }).then((res) => {
+      // 未登录
+      if (res.statusCode === 401) {
+        setDialogLogin(true)
+        return
+      }
       if (res.statusCode !== 200) {
         setFailNotify({
           open: true,
@@ -61,6 +69,7 @@ const NotifyManage = () => {
         })
         return
       }
+
       const { code, data } = res.data
       if (code !== 2000) {
         setFailNotify({
@@ -202,6 +211,21 @@ const NotifyManage = () => {
       >
         {successNotify.content}
       </Notify>
+      <Dialog open={dialogLogin} onClose={() => setDialogLogin(false)}>
+        <Dialog.Header>未登录</Dialog.Header>
+        <Dialog.Content>请登录后使用</Dialog.Content>
+        <Dialog.Actions>
+          <Button onClick={() => {
+            setDialogLogin(false)
+            Taro.switchTab({
+              url: '/pages/profile/index'
+            }).then()
+          }}
+          >
+            确认
+          </Button>
+        </Dialog.Actions>
+      </Dialog>
     </View>
   )
 }
