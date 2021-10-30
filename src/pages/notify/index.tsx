@@ -1,5 +1,5 @@
 import { View, Text } from '@tarojs/components'
-import { useTabItemTap } from '@tarojs/runtime'
+import { useDidShow, useTabItemTap } from '@tarojs/runtime'
 import Taro from '@tarojs/taro'
 import Button from '@taroify/core/button'
 import '@taroify/core/button/style'
@@ -9,6 +9,19 @@ const NotifyManage = () => {
   useTabItemTap(() => {
     Taro.vibrateShort().then()
   })
+
+  useDidShow(() => {
+    Taro.request({
+      url: 'https://api.hellozwz.com/v1/users/notify',
+      method: 'GET',
+      header: {
+        token: Taro.getStorageSync('token'),
+      },
+    }).then((res) => {
+      console.log(res)
+    })
+  })
+
   return (
     <View className='index'>
       <Text>通知管理</Text>
