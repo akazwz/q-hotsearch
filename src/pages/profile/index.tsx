@@ -125,7 +125,6 @@ const About = () => {
         Taro.hideLoading()
         // 登录失败
         if (loginRes.statusCode !== 201) {
-
           setFailNotify({
             open: true,
             content: '登录失败',
@@ -201,10 +200,20 @@ const About = () => {
         Taro.clearStorageSync()
       }}
       />
-      <Notify open={failNotify.open} color='danger'
-              onClose={() => setFailNotify({ open: false, content: '' })}>{failNotify.content}</Notify>
-      <Notify open={successNotify.open} color='success'
-              onClose={() => setSuccessNotify({ open: false, content: '' })}>{successNotify.content}</Notify>
+      <Notify
+        open={failNotify.open}
+        color='danger'
+        onClose={() => setFailNotify({ open: false, content: '' })}
+      >
+        {failNotify.content}
+      </Notify>
+      <Notify
+        open={successNotify.open}
+        color='success'
+        onClose={() => setSuccessNotify({ open: false, content: '' })}
+      >
+        {successNotify.content}
+      </Notify>
     </View>
   )
 }
