@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import Taro from '@tarojs/taro'
 import { View } from '@tarojs/components'
-import { useDidShow, useReady, useTabItemTap } from '@tarojs/runtime'
-import Toast, { ToastType } from '@taroify/core/toast'
-import '@taroify/core/toast/style'
+import { useDidShow, useTabItemTap } from '@tarojs/runtime'
 import Cell from '@taroify/core/cell'
 import '@taroify/core/cell/style'
+import Notify from '@taroify/core/notify'
+import '@taroify/core/notify/style'
 import { Arrow } from '@taroify/icons'
 import UserInfo from './UserInfo'
 
@@ -17,9 +17,6 @@ export interface UserInfoI {
 }
 
 const About = () => {
-  /*const [aboutUs, setAboutUs] = useState(false)
-  const [rateUs, setRateUs] = useState(false)
-  const [rateValue, setRateValue] = useState(5)*/
   const [loginCode, setLoginCode] = useState('')
   const [hasLogin, setHasLogin] = useState(false)
   let userInfoInit: UserInfoI
@@ -30,67 +27,65 @@ const About = () => {
     bio: '',
   }
   const [userInfo, setUserInfo] = useState(userInfoInit)
-
-  const [toastInfo, setToastInfo] = useState({
+  const [failNotify, setFailNotify] = useState({
     open: false,
-    type: ToastType.Loading,
-    content: '登录中',
+    content: ''
   })
-
-  useReady(() => {
-    Taro.setNavigationBarColor({
-      backgroundColor: '#17ce7c',
-      frontColor: '#ffffff',
-      fail: () => {
-        setToastInfo({
-          open: true,
-          type: ToastType.Fail,
-          content: '状态栏颜色设置失败',
-        })
-      }
-    }).then()
-  })
-  // tap vibrate
-  useTabItemTap(() => {
-    Taro.vibrateShort().then()
+  const [successNotify, setSuccessNotify] = useState({
+    open: false,
+    content: ''
   })
 
   useDidShow(() => {
-    try {
-      let info = Taro.getStorageSync('userInfo')
-      if (info) {
-        setUserInfo(info)
+    setNavColor()
+    getUserProfile()
+  })
+
+  const setNavColor = () => {
+    Taro.setNavigationBarColor({
+      backgroundColor: '#F28241',
+      frontColor: '#ffffff',
+      fail: () => {
+        setFailNotify({
+          open: true,
+          content: '背景色设置失败',
+        })
       }
-      let token = Taro.getStorageSync('token')
-      // 存在token
-      if (token) {
-        setHasLogin(true)
-      } else {
-        // 不存在token
-        // 先 login  再 get userinfo
-        Taro.login({
-          success: (result) => {
-            // 获取 code 失败
-            if (!result.code) {
-              setToastInfo({
-                open: true,
-                type: ToastType.Fail,
-                content: '登录失败',
-              })
-              return
-            }
-            // 获取code成功
-            setLoginCode(result.code)
-          }
-        }).then()
-      }
-    } catch (err) {
-      setToastInfo({
-        open: true,
-        type: ToastType.Fail,
-        content: err,
-      })
+    }).then()
+  }
+
+  const getUserProfile = () => {
+    let info = Taro.getStorageSync('userInfo')
+    if (info) {
+      setUserInfo(info)
     }
+    let token = Taro.getStorageSync('token')
+    // 存在token
+    if (token) {
+      setHasLogin(true)
+    } else {
+      // 不存在token
+      // 先 login  再 get userinfo
+      Taro.login({
+        success: (result) => {
+          // 获取 code 失败
+          if (!result.code) {
+            setFailNotify({
+              open: true,
+              content: '登录失败',
+            })
+            return
+          }
+          // 获取code成功
+          setLoginCode(result.code)
+        }
+      }).then()
+    }
+  }
+
+  // tap vibrate
+  useTabItemTap(() => {
+    Taro.vibrateShort().then()
   })
 
   // 登录获取token
@@ -102,11 +97,10 @@ const About = () => {
         // 获取加密数据和iv后进行登录
         handleLoginRequest(loginCode, res.encryptedData, res.iv)
       },
-      fail: (err) => {
-        setToastInfo({
+      fail: () => {
+        setFailNotify({
           open: true,
-          type: ToastType.Fail,
-          content: err.errMsg,
+          content: '登录失败',
         })
       },
     })
@@ -114,6 +108,10 @@ const About = () => {
 
   // 一键登录
   const handleLoginRequest = (LoginCode, encryptedData, iv: string) => {
+    Taro.showLoading({
+      title: '登录中',
+    }).then()
+
     Taro.request({
       url: 'https://api.hellozwz.com/v1/token/open-id',
       data: {
@@ -124,23 +122,23 @@ const About = () => {
       method: 'POST'
     })
       .then((loginRes) => {
+        Taro.hideLoading()
         // 登录失败
         if (loginRes.statusCode !== 201) {
-          setToastInfo({
+
+          setFailNotify({
             open: true,
-            type: ToastType.Fail,
             content: '登录失败',
           })
           return
         }
-        const { code, data, msg } = loginRes.data
+        const { code, data } = loginRes.data
         // 登录失败
         if (code !== 2000) {
           // 登录失败
-          setToastInfo({
+          setFailNotify({
             open: true,
-            type: ToastType.Fail,
-            content: msg,
+            content: '登录失败',
           })
           return
         }
@@ -159,37 +157,19 @@ const About = () => {
         Taro.setStorageSync('authority_id', authority_id)
         Taro.setStorageSync('phone', phone)
         setHasLogin(true)
-      })
-      .catch((err) => {
-        setToastInfo({
+        setSuccessNotify({
           open: true,
-          type: ToastType.Fail,
-          content: err,
+          content: '登录成功',
+        })
+      })
+      .catch(() => {
+        Taro.hideLoading()
+        setFailNotify({
+          open: true,
+          content: '登录失败',
         })
       })
   }
-
-  /*const handleClickZWZ = () => {
-    Taro.setClipboardData({
-      data: 'akazwz',
-      success: function () {
-      }
-    }).then()
-  }*/
-
-  // 退出登录
-  /* const handleQuitLogin = () => {
-     Taro.removeStorageSync('token')
-     Taro.removeStorageSync('expires_at')
-     Taro.removeStorageSync('authority_id')
-     Taro.removeStorageSync('phone')
-     setUserInfo({
-       avatarUrl: '',
-       nickName: '',
-       bio: '',
-     })
-     setHasLogin(false)
-   }*/
 
   // 前往修改资料
   const handleToUpdateProfile = () => {
@@ -212,8 +192,10 @@ const About = () => {
         Taro.clearStorageSync()
       }}
       />
-      <Toast open={toastInfo.open} type={toastInfo.type}>{toastInfo.content}</Toast>
+      <Notify open={failNotify.open} color='danger'>{failNotify.content}</Notify>
+      <Notify open={successNotify.open} color='success'>{successNotify.content}</Notify>
     </View>
   )
 }
+
 export default About

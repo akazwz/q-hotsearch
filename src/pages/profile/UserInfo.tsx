@@ -9,7 +9,6 @@ import Button from '@taroify/core/button'
 import '@taroify/core/button/style'
 import Tag from '@taroify/core/tag'
 import '@taroify/core/tag/style'
-import { Contact, UserCircleOutlined } from '@taroify/icons'
 
 const UserInfo = (props: any) => {
   const { userInfo, hasLogin, handleBtnClick } = props
@@ -17,7 +16,7 @@ const UserInfo = (props: any) => {
   return (
     <View
       style={{
-        backgroundColor: '#17ce7c',
+        backgroundColor: '#F28241',
         padding: '1rem'
       }}
     >
@@ -43,7 +42,6 @@ const UserInfo = (props: any) => {
                   marginTop: '-1rem',
                   marginLeft: '1rem'
                 }}
-                fallback={<Contact />}
               />
             </View>
           </Col>
@@ -66,12 +64,9 @@ const UserInfo = (props: any) => {
           align='center'
         >
           <Col span='24' style={{ margin: '1rem' }}>
-            <UserCircleOutlined
-              style={{
-                color: gender === 0 ? 'blue' : 'pink',
-                marginLeft: '1rem'
-              }}
-            />
+            <Text style={{ marginLeft: '1rem' }}>
+              {gender === 0 ? '🙆‍♂' : '🙆‍♀'}
+            </Text>️
             <Tag
               color={hasLogin ? 'primary' : 'default'}
               shape='round'
@@ -104,7 +99,7 @@ const UserInfo = (props: any) => {
             }}
           >
             <View style={{ paddingLeft: '1rem', paddingRight: '1rem' }}>
-              <Text selectable>{bio}</Text>
+              <Text>{bio}</Text>
             </View>
           </Col>
         </Row>

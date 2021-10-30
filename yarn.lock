@@ -1183,22 +1183,22 @@
   resolved "https://registry.npmmirror.com/@stencil/core/download/@stencil/core-2.4.0.tgz#17b45629c8986e35dcbce3f7dab7d64beede83f2"
   integrity sha1-F7RWKciYbjXcvOP32rfWS+7eg/I=
 
-"@taroify/core@0.0.15-alpha.8":
-  version "0.0.15-alpha.4"
-  resolved "https://registry.npmmirror.com/@taroify/core/download/@taroify/core-0.0.15-alpha.4.tgz#4d797bc12cf36ed215343fee8528759b397840bb"
-  integrity sha1-TXl7wSzzbtIVND/uhSh1mzl4QLs=
+"@taroify/core@0.0.15-alpha.12":
+  version "0.0.15-alpha.12"
+  resolved "https://registry.npmmirror.com/@taroify/core/download/@taroify/core-0.0.15-alpha.12.tgz#6b02df2dab3a14fa18705d7c5c755fbdf7cb7a21"
+  integrity sha1-awLfLas6FPoYcF18XHVfvffLeiE=
   dependencies:
-    "@taroify/icons" "^0.0.15-alpha.4"
+    "@taroify/icons" "^0.0.15-alpha.11"
     classnames "^2.2.6"
     lodash "^4.17.21"
     raf "^3.4.1"
     react-is "^17.0.2"
     react-transition-group "^4.4.1"
 
-"@taroify/icons@0.0.15-alpha.8", "@taroify/icons@^0.0.15-alpha.4":
-  version "0.0.15-alpha.4"
-  resolved "https://registry.npmmirror.com/@taroify/icons/download/@taroify/icons-0.0.15-alpha.4.tgz#4870648f1fbc4727b3224a354d5285d476125a9f"
-  integrity sha1-SHBkjx+8RyezIko1TVKF1HYSWp8=
+"@taroify/icons@0.0.15-alpha.12", "@taroify/icons@^0.0.15-alpha.11":
+  version "0.0.15-alpha.12"
+  resolved "https://registry.npmmirror.com/@taroify/icons/download/@taroify/icons-0.0.15-alpha.12.tgz#9b1ed5eb51ddb33df0dc82624ed556b77e1142e8"
+  integrity sha1-mx7V61Hdsz3w3IJiTtVWt34RQug=
   dependencies:
     classnames "^2.2.6"
 

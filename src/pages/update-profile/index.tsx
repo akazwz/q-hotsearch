@@ -2,7 +2,6 @@ import { View } from '@tarojs/components'
 import { useDidShow, useReady, useTabItemTap } from '@tarojs/runtime'
 import Taro from '@tarojs/taro'
 import { useState } from 'react'
-import Toast, { ToastType } from '@taroify/core/toast'
 import { Contact } from '@taroify/icons'
 import Image from '@taroify/core/image'
 import '@taroify/core/image/style'
@@ -16,20 +15,24 @@ import Divider from '@taroify/core/divider'
 import '@taroify/core/divider/style'
 import Button from '@taroify/core/button'
 import '@taroify/core/button/style'
+import Notify from '@taroify/core/notify'
+import '@taroify/core/notify/style'
 import { UserInfoI } from '../profile'
 
 const UpdateProfile = () => {
-  const [toastInfo, setToastInfo] = useState({
-    open: false,
-    type: ToastType.Loading,
-    content: '加载中',
-  })
-
   const [avatarUrl, setAvatarUrl] = useState('')
   const [nickName, setNickName] = useState('')
   const [gender, setGender] = useState(0)
   const [bio, setBio] = useState('')
   const [btnLoading, setBtnLoading] = useState(false)
+  const [failNotify, setFailNotify] = useState({
+    open: false,
+    content: ''
+  })
+  const [successNotify, setSuccessNotify] = useState({
+    open: false,
+    content: ''
+  })
   // tap vibrate
   useTabItemTap(() => {
     Taro.vibrateShort().then()
@@ -44,13 +47,11 @@ const UpdateProfile = () => {
     let userInfoInit: UserInfoI
     userInfoInit = Taro.getStorageSync('userInfo')
     if (!userInfoInit) {
-      setToastInfo({
+      setFailNotify({
         open: true,
-        type: ToastType.Fail,
         content: '获取用户信息失败',
       })
     }
-
     setAvatarUrl(userInfoInit.avatarUrl)
     setNickName(userInfoInit.nickName)
     setGender(userInfoInit.gender)
@@ -75,25 +76,22 @@ const UpdateProfile = () => {
       .then((res) => {
         setBtnLoading(false)
         if (res.statusCode !== 200) {
-          setToastInfo({
+          setFailNotify({
             open: true,
-            type: ToastType.Fail,
-            content: '修改失败',
+            content: '修改资料失败',
           })
           return
         }
         const { code } = res.data
         if (code !== 2000) {
-          setToastInfo({
+          setFailNotify({
             open: true,
-            type: ToastType.Fail,
-            content: '修改失败',
+            content: '修改资料失败',
           })
           return
         }
-        setToastInfo({
+        setSuccessNotify({
           open: true,
-          type: ToastType.Success,
           content: '修改成功',
         })
         const userInfoUpdated = {
@@ -104,12 +102,11 @@ const UpdateProfile = () => {
         }
         Taro.setStorageSync('userInfo', userInfoUpdated)
       })
-      .catch((err) => {
+      .catch(() => {
         setBtnLoading(false)
-        setToastInfo({
+        setFailNotify({
           open: true,
-          type: ToastType.Fail,
-          content: err,
+          content: '修改资料失败',
         })
       })
   }
@@ -177,7 +174,8 @@ const UpdateProfile = () => {
           提交
         </Button>
       </View>
-      <Toast open={toastInfo.open} type={toastInfo.type}>{toastInfo.content}</Toast>
+      <Notify open={failNotify.open} color='danger'>{failNotify.content}</Notify>
+      <Notify open={successNotify.open} color='success'>{successNotify.content}</Notify>
     </View>
   )
 }
