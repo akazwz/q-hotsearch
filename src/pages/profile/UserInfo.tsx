@@ -16,7 +16,7 @@ const UserInfo = (props: any) => {
   return (
     <View
       style={{
-        backgroundColor: '#F28241',
+        backgroundColor: '#FF9933',
         padding: '1rem'
       }}
     >

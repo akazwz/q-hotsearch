@@ -174,8 +174,8 @@ const UpdateProfile = () => {
           提交
         </Button>
       </View>
-      <Notify open={failNotify.open} color='danger'>{failNotify.content}</Notify>
-      <Notify open={successNotify.open} color='success'>{successNotify.content}</Notify>
+      <Notify open={failNotify.open} color='danger' onClose={()=>setFailNotify({open: false, content: ''})}>{failNotify.content}</Notify>
+      <Notify open={successNotify.open} color='success' onClose={()=>setSuccessNotify({open: false, content: ''})}>{successNotify.content}</Notify>
     </View>
   )
 }

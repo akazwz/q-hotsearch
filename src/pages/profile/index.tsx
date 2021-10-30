@@ -43,7 +43,7 @@ const About = () => {
 
   const setNavColor = () => {
     Taro.setNavigationBarColor({
-      backgroundColor: '#F28241',
+      backgroundColor: '#FF9933',
       frontColor: '#ffffff',
       fail: () => {
         setFailNotify({
@@ -192,8 +192,8 @@ const About = () => {
         Taro.clearStorageSync()
       }}
       />
-      <Notify open={failNotify.open} color='danger'>{failNotify.content}</Notify>
-      <Notify open={successNotify.open} color='success'>{successNotify.content}</Notify>
+      <Notify open={failNotify.open} color='danger' onClose={()=>setFailNotify({open: false, content: ''})}>{failNotify.content}</Notify>
+      <Notify open={successNotify.open} color='success' onClose={()=>setSuccessNotify({open: false, content: ''})}>{successNotify.content}</Notify>
     </View>
   )
 }
